@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/chichiwang/snapbang",
   "dependencies": {
-    "cli-color": "^0.3.2"
+    "cli-color": "^0.3.2",
+    "sitemap": "^0.7.3"
   }
 }
