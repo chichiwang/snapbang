@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/chichiwang/snapbang/issues"
   },
-  "homepage": "https://github.com/chichiwang/snapbang"
+  "homepage": "https://github.com/chichiwang/snapbang",
+  "dependencies": {
+    "cli-color": "^0.3.2"
+  }
 }

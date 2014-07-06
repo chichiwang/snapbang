@@ -1,3 +1,7 @@
 fs = require 'fs'
+colors = require 'cli-color'
 
-console.log 'INITIAL FILE'
+# Color definitions
+notice = colors.bgCyanBright.black
+
+console.log notice('INITIAL FILE')
