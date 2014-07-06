@@ -4,4 +4,7 @@ colors = require 'cli-color'
 # Color definitions
 notice = colors.bgCyanBright.black
 
-console.log notice('INITIAL FILE')
+main = ->
+	console.log notice('INITIAL FILE')
+
+exports.convert = main
