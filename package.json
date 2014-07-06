@@ -1,0 +1,25 @@
+{
+  "name": "snapbang",
+  "version": "0.0.0",
+  "description": "A sitemap.xml and static snapshots generator for single page applications using the hashbang convention.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:chichiwang/snapbang.git"
+  },
+  "keywords": [
+    "hashbang",
+    "static",
+    "snapshots",
+    "crawlable"
+  ],
+  "author": "Chi-chi Wang",
+  "license": "MIT License",
+  "bugs": {
+    "url": "https://github.com/chichiwang/snapbang/issues"
+  },
+  "homepage": "https://github.com/chichiwang/snapbang"
+}
