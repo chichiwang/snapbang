@@ -25,7 +25,6 @@ Config =
 	configFile: 'snapbang.json'
 prepOptions = ->
 	options = getOptions()
-
 	console.log notice('Prepare Options'), '\n', options
 
 getOptions = ->
@@ -47,7 +46,7 @@ getConfig = (configFile)->
 	fileContents = fs.readFileSync configFile, { encoding: 'utf8' }
 	JSON.parse fileContents
 
-# === Sitemap Generation ===
+# === Sitemap Functions ===
 createSitemap = ->
 	sitemap = sm.createSitemap ({
 			hostname: 'http://example.com',
