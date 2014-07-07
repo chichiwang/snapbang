@@ -1,10 +1,12 @@
 # === Global Dependencies ===
 fs = require 'fs'
+_ = require 'lodash-node'
 colors = require 'cli-color'
 sm = require 'sitemap'
 
 # === Color Definitions ===
 notice = colors.bgCyanBright.black
+debug = colors.bgYellowBright.black
 
 # === Primary Execution Block ===
 main = ->
@@ -15,7 +17,12 @@ main = ->
 # === Options Preparation ===
 Config = {}
 prepOptions = ->
-	console.log notice('Prepare Options'), '\n', process.argv
+	console.log notice('Prepare Options'), '\n', getArguments()
+
+getArguments = ->
+	args = _.cloneDeep process.argv
+	args.splice 0,2
+	args
 
 # === Sitemap Generation ===
 createSitemap = ->
