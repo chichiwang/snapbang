@@ -1,3 +1,6 @@
 {
-	"url":"http://www.vincelopezdesign.com"
+	"url": "http://www.google.com",
+	"devUrl": "http://www.yahoo.com",
+
+	"destination": "dist/"
 }

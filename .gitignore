@@ -1,5 +1,6 @@
-# Compile directory
+# Development Directories
 lib/
+dist/
 
 # NPM stuff
 node_modules/
