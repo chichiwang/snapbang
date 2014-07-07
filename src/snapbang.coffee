@@ -1,14 +1,23 @@
+# === Global Dependencies ===
 fs = require 'fs'
 colors = require 'cli-color'
 sm = require 'sitemap'
 
-# Color definitions
+# === Color Definitions ===
 notice = colors.bgCyanBright.black
 
+# === Primary Execution Block ===
 main = ->
 	sitemap = createSitemap()
-	console.log notice('INITIAL SITEMAP'), sitemap
+	console.log notice('INITIAL SITEMAP'), '\n', sitemap
+	prepOptions()
 
+# === Options Preparation ===
+Config = {}
+prepOptions = ->
+	console.log notice('Prepare Options'), '\n', process.argv
+
+# === Sitemap Generation ===
 createSitemap = ->
 	sitemap = sm.createSitemap ({
 			hostname: 'http://example.com',
