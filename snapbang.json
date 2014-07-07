@@ -2,5 +2,19 @@
 	"url": "http://www.google.com",
 	"devUrl": "http://www.yahoo.com",
 
-	"destination": "dist/"
+	"auth": {
+		"pass": "password"
+	},
+
+	"routes": [
+		{ "route": "/#!/hash1" },
+		{ "route": "/#!/hash2" }
+	],
+
+	"sitemap": {
+		"destination": "dist/"
+	},
+	"snapshots": {
+		"destination": "dist/"
+	}
 }
