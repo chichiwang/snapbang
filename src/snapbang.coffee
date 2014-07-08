@@ -6,7 +6,6 @@ sm = require 'sitemap'
 
 # Global Variables
 isWindows = process.platform is 'win32'
-slash = if isWindows then '\\' else '/'
 
 # === Color Definitions ===
 notice = colors.bgCyanBright.black
@@ -19,26 +18,29 @@ main = ->
 	# sitemap = createSitemap()
 	# console.log notice('INITIAL SITEMAP'), '\n', sitemap
 	prepOptions()
-	writeTempFile('test')
+	writeProcFile()
 
 # === Options Preparation ===
 Options =
-	config: 'snapbang.json'
-	tempDir: '.snapbang'
+	configFile: 'snapbang.json'
+	procDir: '.snapbang'
+	sitemap:
+		filename: 'sitemap.xml'
 prepOptions = ->
 	options = getOptions()
-	console.log notice('Prepare Config'), '\n', options
+	Options = _.merge Options, options 
+	console.log notice('Prepare Config'), '\n', Options
 
 getOptions = ->
 	params = getParameters()
 	options = false
-	if _.isEmpty(params) and not fs.existsSync(Options.config)
+	if _.isEmpty(params) and not fs.existsSync(Options.configFile)
 		console.log errorTitle('Error:'), errorMsg('No config file found')
 		throw new Error 'No config file found'
 	else if params and fs.existsSync(params[0])
 		options = getConfig params[0]
-	else if fs.existsSync(Options.config)
-		options = getConfig Options.config
+	else if fs.existsSync(Options.configFile)
+		options = getConfig Options.configFile
 	options
 getParameters = ->
 	args = _.cloneDeep process.argv
@@ -48,25 +50,39 @@ getConfig = (config)->
 	fileContents = fs.readFileSync config, { encoding: 'utf8' }
 	JSON.parse fileContents
 
-# === Temporary Files ===
-writeTempFile = (str)->
-	dir = Options.tempDir
-	createDir dir
+# === Process Files ===
+writeProcFile = ->
+	dir = createDir Options.procDir
+	filepath = dir+'/'+Options.sitemap.filename
 
-	# console.log notice('writeTempFile'), fs.existsSync(Options.tempDir)
+	url = Options.snapshots.url
+	routes = Options.routes
+	Options.sitemap.xml = getSitemap(sitemapOptions(url, routes))
+
+	fs.writeFileSync filepath, Options.sitemap.xml
 
 # === Sitemap Functions ===
-createSitemap = ->
-	sitemap = sm.createSitemap ({
-			hostname: 'http://example.com',
-			cacheTime: 0,
-			urls: [
-				{ url: '/#!/page-1/',  changefreq: 'daily', priority: 0.3 },
-				{ url: '/#!/page-2/',  changefreq: 'monthly',  priority: 0.7 },
-				{ url: '/#!/page-3/' }
-			]
-	})
-	sitemap.toString()
+sitemapOptions = (url, routes)->
+	urls = []
+	for route in routes
+		urls.push {
+			url: route.route if not _.isUndefined(route.route)
+			changefreq: route.changefreq if not _.isUndefined(route.changefreq)
+			priority: route.priority if not _.isUndefined(route.priority)
+		}
+
+	options =
+		hostname: url
+		cacheTime: 0
+		urls: urls
+getSitemap = (options)->
+	sitemap = sm.createSitemap(options)
+	formatSitemap sitemap.toString()
+formatSitemap = (sitemapStr)->
+	openUrl = new RegExp(escapeRegExp('<url>'), 'g')
+	closeUrl = new RegExp(escapeRegExp(' </url>'), 'g')
+	tagSpace =  new RegExp(escapeRegExp('> <'), 'g')
+	sitemapStr.replace(openUrl, '	<url>').replace(closeUrl, '\n	</url>').replace(tagSpace,'>\n		<')
 
 # === HELPER FUNCTIONS ===
 escapeRegExp = (string) ->
@@ -76,18 +92,15 @@ createDir = (dir)->
 	backSlash = new RegExp(escapeRegExp('\\'), 'g')
 	dir = dir.replace backSlash, '/'
 	dirs = dir.split('/')
-
-	pathCreated = false
-
 	currentDir = false
+
 	for folder in dirs
 		if currentDir is false
 			currentDir = folder
 		else
-			currentDir = currentDir+slash+folder
+			currentDir = currentDir+'/'+folder
 		if not fs.existsSync(currentDir)
 			fs.mkdirSync(currentDir)
-			pathCreated = true
-	pathCreated
+	currentDir
 
 exports.convert = main
