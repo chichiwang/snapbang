@@ -19,32 +19,41 @@ main = ->
 	# sitemap = createSitemap()
 	# console.log notice('INITIAL SITEMAP'), '\n', sitemap
 	prepOptions()
+	writeTempFile('test')
 
 # === Options Preparation ===
-Config =
-	configFile: 'snapbang.json'
+Options =
+	config: 'snapbang.json'
+	tempDir: '.snapbang'
 prepOptions = ->
 	options = getOptions()
-	console.log notice('Prepare Options'), '\n', options
+	console.log notice('Prepare Config'), '\n', options
 
 getOptions = ->
 	params = getParameters()
 	options = false
-	if _.isEmpty(params) and not fs.existsSync(Config.configFile)
+	if _.isEmpty(params) and not fs.existsSync(Options.config)
 		console.log errorTitle('Error:'), errorMsg('No config file found')
 		throw new Error 'No config file found'
 	else if params and fs.existsSync(params[0])
 		options = getConfig params[0]
-	else if fs.existsSync(Config.configFile)
-		options = getConfig Config.configFile
+	else if fs.existsSync(Options.config)
+		options = getConfig Options.config
 	options
 getParameters = ->
 	args = _.cloneDeep process.argv
 	args.splice 0,2
 	args
-getConfig = (configFile)->
-	fileContents = fs.readFileSync configFile, { encoding: 'utf8' }
+getConfig = (config)->
+	fileContents = fs.readFileSync config, { encoding: 'utf8' }
 	JSON.parse fileContents
+
+# === Temporary Files ===
+writeTempFile = (str)->
+	dir = Options.tempDir
+	createDir dir
+
+	# console.log notice('writeTempFile'), fs.existsSync(Options.tempDir)
 
 # === Sitemap Functions ===
 createSitemap = ->
@@ -58,5 +67,27 @@ createSitemap = ->
 			]
 	})
 	sitemap.toString()
+
+# === HELPER FUNCTIONS ===
+escapeRegExp = (string) ->
+	return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1")
+
+createDir = (dir)->
+	backSlash = new RegExp(escapeRegExp('\\'), 'g')
+	dir = dir.replace backSlash, '/'
+	dirs = dir.split('/')
+
+	pathCreated = false
+
+	currentDir = false
+	for folder in dirs
+		if currentDir is false
+			currentDir = folder
+		else
+			currentDir = currentDir+slash+folder
+		if not fs.existsSync(currentDir)
+			fs.mkdirSync(currentDir)
+			pathCreated = true
+	pathCreated
 
 exports.convert = main

@@ -6,10 +6,11 @@
 		{ "route": "/#!/hash2" }
 	],
 	"sitemap": {
-		"destination": "dist/",
-		"enabled": true
+		"enabled": true,
+		"destination": "dist/"
 	},
 	"snapshots": {
+		"enabled": true,
 		"destination": "dist/",
 		"url": "http://www.yahoo.com",
 		"auth": {
