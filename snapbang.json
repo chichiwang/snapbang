@@ -2,17 +2,17 @@
 	"url": "http://www.google.com",
 
 	"routes": [
-		{ "route": "/#!/hash1" },
-		{ "route": "/#!/hash2" }
+		{ "route": "/#news" },
+		{ "route": "/#traditional" }
 	],
 	"sitemap": {
 		"enabled": true,
-		"destination": "dist/"
+		"destination": "dist"
 	},
 	"snapshots": {
 		"enabled": true,
-		"destination": "dist/",
-		"url": "http://www.yahoo.com",
+		"destination": "dist",
+		"url": "http://tlbprototype.art-sucks.com",
 		"auth": {
 			"pass": "password"
 		}

@@ -3,6 +3,7 @@ fs = require 'fs'
 _ = require 'lodash-node'
 colors = require 'cli-color'
 sm = require 'sitemap'
+snapshots = require 'html-snapshots'
 
 # Global Variables
 isWindows = process.platform is 'win32'
@@ -19,7 +20,8 @@ main = ->
 	# console.log notice('INITIAL SITEMAP'), '\n', sitemap
 	prepOptions()
 	writeProcFile()
-	dispose()
+	console.log createSnapshots()
+	# dispose()
 
 # === Options Preparation ===
 Options =
@@ -99,6 +101,17 @@ formatSitemap = (sitemapStr)->
 	closeUrl = new RegExp(escapeRegExp(' </url>'), 'g')
 	tagSpace =  new RegExp(escapeRegExp('> <'), 'g')
 	sitemapStr.replace(openUrl, '	<url>').replace(closeUrl, '\n	</url>').replace(tagSpace,'>\n		<')
+
+# === Snapshot Functions ===
+createSnapshots = ->
+	success = snapshots.run
+		input: 'sitemap'
+		source: Options.procDir+'/'+Options.sitemap.filename
+		hostname: Options.snapshots.url
+		outputDir: './dist'
+		outputDirClean: true
+		selector: 'body'
+		processLimit: 1
 
 # === HELPER FUNCTIONS ===
 escapeRegExp = (string) ->

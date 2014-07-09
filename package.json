@@ -29,6 +29,7 @@
   "homepage": "https://github.com/chichiwang/snapbang",
   "dependencies": {
     "cli-color": "^0.3.2",
+    "html-snapshots": "^0.4.3",
     "lodash-node": "^2.4.1",
     "sitemap": "^0.7.3"
   }
