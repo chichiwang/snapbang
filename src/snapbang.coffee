@@ -19,6 +19,7 @@ main = ->
 	# console.log notice('INITIAL SITEMAP'), '\n', sitemap
 	prepOptions()
 	writeProcFile()
+	dispose()
 
 # === Options Preparation ===
 Options =
@@ -60,6 +61,21 @@ writeProcFile = ->
 	Options.sitemap.xml = getSitemap(sitemapOptions(url, routes))
 
 	fs.writeFileSync filepath, Options.sitemap.xml
+
+dispose = ->
+	rmProcFile()
+	rmProcDir()
+rmProcDir = ->
+	dirContents = fs.readdirSync Options.procDir
+	if _.isEmpty(dirContents)
+		fs.rmdirSync Options.procDir
+		true
+	else
+		console.log errorTitle('Error:'), errorMsg('Temp Directory Not Empty')
+		throw new Error 'Temp Directory Not Empty'
+rmProcFile = ->
+	filepath = Options.procDir+'/'+Options.sitemap.filename
+	fs.unlinkSync filepath
 
 # === Sitemap Functions ===
 sitemapOptions = (url, routes)->
