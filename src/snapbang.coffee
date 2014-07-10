@@ -110,9 +110,15 @@ createSnapshots = ->
 		hostname: Options.snapshots.url
 		outputDir: './dist'
 		outputDirClean: true
+		outputPath:
+			"http://tlbprototype.art-sucks.com/#news": "./dist"
+			"http://tlbprototype.art-sucks.com/#traditional": "./dist"
+		auth: 'test:password'
 		selector: 'body'
 		processLimit: 1
-
+outputPath = (url)->
+	hashbang = new RegExp(escapeRegExp("/#"))
+	return url.replace(hashbang, '')+'.html'
 # === HELPER FUNCTIONS ===
 escapeRegExp = (string) ->
 	return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1")
