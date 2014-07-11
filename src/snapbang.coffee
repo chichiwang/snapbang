@@ -103,7 +103,7 @@ formatSitemap = (sitemapStr)->
 	sitemapStr.replace(openUrl, '	<url>').replace(closeUrl, '\n	</url>').replace(tagSpace,'>\n		<')
 
 # === Snapshot Functions ===
-createSnapshots = ->
+snapshotTest = ->
 	success = snapshots.run
 		input: 'sitemap'
 		source: Options.procDir+'/'+Options.sitemap.filename
@@ -116,9 +116,6 @@ createSnapshots = ->
 		auth: 'test:password'
 		selector: 'body'
 		processLimit: 1
-outputPath = (url)->
-	hashbang = new RegExp(escapeRegExp("/#"))
-	return url.replace(hashbang, '')+'.html'
 # === HELPER FUNCTIONS ===
 escapeRegExp = (string) ->
 	return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1")
