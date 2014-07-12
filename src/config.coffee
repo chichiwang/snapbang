@@ -1,4 +1,8 @@
-#Vendors
+# Node API
+fs = require 'fs'
+
+# Vendors
+_ = require 'lodash-node'
 colors = require 'cli-color'
 
 # Color Definitions
@@ -9,9 +13,25 @@ errorMsg = colors.redBright.bgBlack
 
 # Class Definition
 class Config
-	defaults = {}
+	_defaults = {}
 	constructor: (options = {})->
-		defaults = _.merge options.defaults if options.defaults
-		console.log notice('defaults'), defaults
+		_defaults = _.merge options.defaults if options.defaults
+		console.log notice('_defaults'), _defaults
 
-module.exports = new Config
+	getOptions = ->
+		params = getParameters()
+		options = false
+		if _.isEmpty(params) and not fs.existsSync(Options.configFile)
+			console.log errorTitle('Error:'), errorMsg('No config file found')
+			throw new Error 'No config file found'
+		else if params and fs.existsSync(params[0])
+			options = getConfig params[0]
+		else if fs.existsSync(Options.configFile)
+			options = getConfig Options.configFile
+		options
+	getParameters = ->
+		args = _.cloneDeep process.argv
+		args.splice 0,2
+		args
+
+module.exports = Config

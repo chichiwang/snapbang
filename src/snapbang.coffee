@@ -22,8 +22,17 @@ colors = require 'cli-color'
 sm = require 'sitemap'
 snapshots = require 'html-snapshots'
 
-# 
+# Retrieve Configuration
 Config = require './config'
+config = new Config
+	configFile: 'snapbang.json'
+	defaults:
+		procDir: '.snapbang'
+		sitemap:
+			enabled: false
+			filename: 'sitemap.xml'
+		snapshots:
+			enabled: false
 
 # === Color Definitions ===
 notice = colors.bgCyanBright.black
@@ -42,11 +51,6 @@ main = ->
 
 # 
 # === Options Preparation ===
-Options =
-	configFile: 'snapbang.json'
-	procDir: '.snapbang'
-	sitemap:
-		filename: 'sitemap.xml'
 prepOptions = ->
 	options = getOptions()
 	Options = _.merge Options, options 
