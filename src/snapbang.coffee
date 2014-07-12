@@ -1,12 +1,29 @@
-# Global Dependencies
+`/*
+ * snapbang.js
+ *
+ * A utility which provides an automated process for
+ * generating a sitemap.xml and static html snapshots
+ * for the purposes of SEO and social network integration.
+ *
+ * This utility wraps the following apps:
+ *    sitemap.js (https://github.com/ekalinin/sitemap.js)
+ *    html-snapshots.js (https://github.com/localnerve/html-snapshots)
+ * 
+ * Ideal for client-side web applications.
+ *
+ * Copyright (c) 2014, Chi Wang, contributors
+ * Licensed under the MIT license.
+ */`
+
+# Vendors
 fs = require 'fs'
 _ = require 'lodash-node'
 colors = require 'cli-color'
 sm = require 'sitemap'
 snapshots = require 'html-snapshots'
 
-# Global Variables
-isWindows = process.platform is 'win32'
+# 
+Config = require './config'
 
 # === Color Definitions ===
 notice = colors.bgCyanBright.black
@@ -18,11 +35,12 @@ errorMsg = colors.redBright.bgBlack
 main = ->
 	# sitemap = createSitemap()
 	# console.log notice('INITIAL SITEMAP'), '\n', sitemap
-	prepOptions()
-	writeProcFile()
-	console.log createSnapshots()
+	# prepOptions()
+	# writeProcFile()
+	# createSnapshots()
 	# dispose()
 
+# 
 # === Options Preparation ===
 Options =
 	configFile: 'snapbang.json'
@@ -103,6 +121,9 @@ formatSitemap = (sitemapStr)->
 	sitemapStr.replace(openUrl, '	<url>').replace(closeUrl, '\n	</url>').replace(tagSpace,'>\n		<')
 
 # === Snapshot Functions ===
+createSnapshots: ->
+	# ...
+
 snapshotTest = ->
 	success = snapshots.run
 		input: 'sitemap'

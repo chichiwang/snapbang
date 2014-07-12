@@ -12,7 +12,7 @@
 	"snapshots": {
 		"enabled": true,
 		"destination": "dist",
-		"url": "http://test:password@tlbprototype.art-sucks.com",
+		"url": "http://tlbprototype.art-sucks.com",
 		"auth": "test:password"
 	}
 }

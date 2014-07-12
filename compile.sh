@@ -1,2 +1,2 @@
-coffee -o lib/ -cm src/
+coffee -o lib/ -c src/
 echo "Application compiled in: ./lib"
