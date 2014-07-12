@@ -5,7 +5,7 @@
  * generating a sitemap.xml and static html snapshots
  * for the purposes of SEO and social network integration.
  *
- * This utility wraps the following apps:
+ * This utility wraps the following packages:
  *    sitemap.js (https://github.com/ekalinin/sitemap.js)
  *    html-snapshots.js (https://github.com/localnerve/html-snapshots)
  * 
