@@ -45,4 +45,4 @@ addTheme = (theme, func)->
 
 # Initialize the module
 initialize() if not initialized
-module.exports = initialized
+module.exports = colors
