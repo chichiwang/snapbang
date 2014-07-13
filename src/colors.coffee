@@ -1,5 +1,4 @@
 # Vendors
-_ = require 'lodash-node'
 colors = require 'cli-color'
 
 # Color Definitions
@@ -17,8 +16,7 @@ stringPrototypeBlacklist = [
 
 # Register themes to String.prototype
 initialized = false
-initialize = (options={})->
-	themes = _.merge themes, options
+initialize = ->
 	for theme of themes
 		if theme in stringPrototypeBlacklist
 			err = 'Colors: '+theme+' is a String property you do not want to overwrite!'
