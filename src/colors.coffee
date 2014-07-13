@@ -1,3 +1,13 @@
+`/*
+ * Module: colors.js
+ *
+ * A module that wraps cli-color (https://github.com/medikoo/cli-color)
+ * to create String.prototype aliases for pre-defined color themes.
+ *
+ * Copyright (c) 2014, Chi Wang
+ * Licensed under the MIT license.
+ */`
+
 # Vendors
 colors = require 'cli-color'
 
