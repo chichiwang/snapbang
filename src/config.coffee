@@ -18,6 +18,7 @@ _ = require 'lodash-node'
 # Class Definition
 class Config
 	_defaults = {}
+	_config = {}
 	configFile = 'config.json'
 	constructor: (options = {})->
 		_defaults = _.merge(_defaults, options.defaults) if options.defaults
@@ -58,7 +59,7 @@ class Config
 		# Empty string passed in, replace root config object
 		assigned = false
 		if prop is ""
-			_assignConfig {}
+			_config = val
 			assigned = true
 		# Search the config properties to set the value 
 		else
@@ -77,16 +78,11 @@ class Config
 				err = "config.coffee: Unable to set "+prop+"to "+val
 				console.log err.error
 				throw new Error err
-			_assignConfig config
 		assigned
-	# Workaround for coffee variable hoisting bug
-	_assignConfig = (val)->
-		_config = val
 
 	# Retrieve parameters
 	# Find and read config JSON
 	# Store the JSON
-	_config = {}
 	_setConfig = ->
 		_config = _.merge _defaults, _getConfig()
 	_getConfig = ->
