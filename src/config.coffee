@@ -40,7 +40,7 @@ class Config
 		else
 			propTree = prop.split('.')
 			endOfPropTree = propTree.length-1
-			config = _config
+			config = _.cloneDeep _config
 			for key, idx in propTree
 				if idx is endOfPropTree
 					result = _.cloneDeep(config[key]) if not _.isUndefined(config[key])
@@ -49,16 +49,16 @@ class Config
 				config = config[key]
 		result
 	# Set a config property
-	set: (prop=false, val)->
+	set: (prop, val)->
 		# Must declare a property to set a value on
-		if prop is false or not _.isString(prop)
+		if not _.isString(prop)
 			err = "config.coffee: set() method must be passed a valid property name"
 			console.log err.error
 			throw new Error err
 		# Empty string passed in, replace root config object
 		assigned = false
-		if _.isEmpty(prop)
-			_config = val
+		if prop is ""
+			_assignConfig {}
 			assigned = true
 		# Search the config properties to set the value 
 		else
@@ -77,7 +77,11 @@ class Config
 				err = "config.coffee: Unable to set "+prop+"to "+val
 				console.log err.error
 				throw new Error err
+			_assignConfig config
 		assigned
+	# Workaround for coffee variable hoisting bug
+	_assignConfig = (val)->
+		_config = val
 
 	# Retrieve parameters
 	# Find and read config JSON

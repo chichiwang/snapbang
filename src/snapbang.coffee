@@ -39,6 +39,8 @@ config = new Config
 # Primary Execution Block
 main = ->
 	console.log 'options:'.notice, config.get('snapshots.auth')
+	config.set('snapshots.auth', 'new:auth')
+	console.log 'options:'.notice, config.get('snapshots.auth')
 	# sitemap = createSitemap()
 	# console.log notice('INITIAL SITEMAP'), '\n', sitemap
 	# prepOptions()
