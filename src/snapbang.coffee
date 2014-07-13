@@ -36,40 +36,16 @@ config = new Config
 		snapshots:
 			enabled: false
 
-# === Primary Execution Block ===
+# Primary Execution Block
 main = ->
+	options = config.get()
+	console.log 'options:'.notice, options
 	# sitemap = createSitemap()
 	# console.log notice('INITIAL SITEMAP'), '\n', sitemap
 	# prepOptions()
 	# writeProcFile()
 	# createSnapshots()
 	# dispose()
-
-# 
-# === Options Preparation ===
-prepOptions = ->
-	options = getOptions()
-	Options = _.merge Options, options 
-	console.log notice('Prepare Config'), '\n', Options
-
-getOptions = ->
-	params = getParameters()
-	options = false
-	if _.isEmpty(params) and not fs.existsSync(Options.configFile)
-		console.log errorTitle('Error:'), errorMsg('No config file found')
-		throw new Error 'No config file found'
-	else if params and fs.existsSync(params[0])
-		options = getConfig params[0]
-	else if fs.existsSync(Options.configFile)
-		options = getConfig Options.configFile
-	options
-getParameters = ->
-	args = _.cloneDeep process.argv
-	args.splice 0,2
-	args
-getConfig = (config)->
-	fileContents = fs.readFileSync config, { encoding: 'utf8' }
-	JSON.parse fileContents
 
 # === Process Files ===
 writeProcFile = ->
