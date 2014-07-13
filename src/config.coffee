@@ -1,5 +1,5 @@
 `/*
- * Module: config.js
+ * Module: config.coffee
  *
  * A module that retrieves and manages a configuration JSON.
  * Retrieves configuration JSON from a file.
