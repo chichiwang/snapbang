@@ -15,10 +15,12 @@
  * Licensed under the MIT license.
  */`
 
-# Vendors
+# Modules
 fs = require 'fs'
+colors = require './colors'
+
+# Vendors
 _ = require 'lodash-node'
-colors = require 'cli-color'
 sm = require 'sitemap'
 snapshots = require 'html-snapshots'
 
@@ -33,12 +35,6 @@ config = new Config
 			filename: 'sitemap.xml'
 		snapshots:
 			enabled: false
-
-# === Color Definitions ===
-notice = colors.bgCyanBright.black
-debug = colors.bgYellowBright.black
-errorTitle = colors.bgRedBright.black
-errorMsg = colors.redBright.bgBlack
 
 # === Primary Execution Block ===
 main = ->

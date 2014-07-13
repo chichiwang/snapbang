@@ -1,15 +1,9 @@
-# Node API
+# Modules
 fs = require 'fs'
+colors = require './colors'
 
 # Vendors
 _ = require 'lodash-node'
-colors = require 'cli-color'
-
-# Color Definitions
-notice = colors.bgCyanBright.black
-debug = colors.bgYellowBright.black
-errorTitle = colors.bgRedBright.black
-errorMsg = colors.redBright.bgBlack
 
 # Class Definition
 class Config
@@ -18,7 +12,7 @@ class Config
 		_defaults = _.merge options.defaults if options.defaults
 		console.log notice('_defaults'), _defaults
 
-	getOptions = ->
+	_getOptions = ->
 		params = getParameters()
 		options = false
 		if _.isEmpty(params) and not fs.existsSync(Options.configFile)
@@ -29,9 +23,10 @@ class Config
 		else if fs.existsSync(Options.configFile)
 			options = getConfig Options.configFile
 		options
-	getParameters = ->
-		args = _.cloneDeep process.argv
-		args.splice 0,2
-		args
+	_getParameters = ->
+		args = _.cloneDeep(process.argv).splice(0,2)
+	_getConfig = (config)->
+		fileContents = fs.readFileSync config, { encoding: 'utf8' }
+		JSON.parse fileContents
 
 module.exports = Config
