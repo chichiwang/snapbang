@@ -24,7 +24,7 @@ _ = require 'lodash-node'
 sm = require 'sitemap'
 snapshots = require 'html-snapshots'
 
-# Retrieve Configuration
+# Retrieve Config JSON
 Config = require './config'
 config = new Config
 	configFile: 'snapbang.json'
@@ -38,8 +38,7 @@ config = new Config
 
 # Primary Execution Block
 main = ->
-	options = config.get()
-	console.log 'options:'.notice, options
+	console.log 'options:'.notice, config.get('snapshots.auth')
 	# sitemap = createSitemap()
 	# console.log notice('INITIAL SITEMAP'), '\n', sitemap
 	# prepOptions()
