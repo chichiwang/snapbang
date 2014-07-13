@@ -19,10 +19,10 @@ _ = require 'lodash-node'
 class Config
 	_defaults = {}
 	_config = {}
-	configFile = 'config.json'
+	_configFile = 'config.json'
 	constructor: (options = {})->
 		_defaults = _.merge(_defaults, options.defaults) if options.defaults
-		configFile = options.configFile if options.configFile
+		_configFile = options.configFile if options.configFile
 		_setConfig()
 
 	# Get a config property
@@ -88,14 +88,14 @@ class Config
 	_getConfig = ->
 		args = _getArgs()
 		config = false
-		if _.isEmpty(args) and not fs.existsSync(configFile)
+		if _.isEmpty(args) and not fs.existsSync(_configFile)
 			err = 'config.coffe: No config file found'
 			console.log err.error
 			throw new Error err
 		else if args and fs.existsSync(args[0])
 			config = _readJSON args[0]
-		else if fs.existsSync(configFile)
-			config = _readJSON configFile
+		else if fs.existsSync(_configFile)
+			config = _readJSON _configFile
 		config
 	_getArgs = ->
 		args = _.cloneDeep(process.argv).splice(0,2)
