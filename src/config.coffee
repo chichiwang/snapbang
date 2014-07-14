@@ -1,5 +1,6 @@
 `/*
  * Module: config.coffee
+ * 0.0.0
  *
  * A module that retrieves and manages a configuration JSON.
  * Retrieves configuration JSON from a file.
@@ -20,11 +21,11 @@ class Config
 	_defaults = {}
 	_config = {}
 	_configFile = 'config.json'
+
 	constructor: (options = {})->
 		_defaults = _.merge(_defaults, options.defaults) if options.defaults
 		_configFile = options.configFile if options.configFile
 		_setConfig()
-
 	# Get a config property
 	get: (prop="")->
 		# Parameter must be a string

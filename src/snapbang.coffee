@@ -1,5 +1,6 @@
 `/*
  * snapbang.js
+ * 0.0.0
  *
  * A utility which provides an automated process for
  * generating a sitemap.xml and static html snapshots
@@ -42,6 +43,7 @@ class Sitemap
 		smOptions = _processOptions url, routes
 		sitemap = sm.createSitemap(smOptions)
 		_formatSitemap sitemap.toString()
+
 	_processOptions = (url, routes)->
 		_validateParams url, routes
 		isAddress = url.indexOf('http') is 0
