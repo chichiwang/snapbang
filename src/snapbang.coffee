@@ -46,11 +46,6 @@ class Sitemap
 
 	_processOptions = (url, routes)->
 		_validateParams url, routes
-		isAddress = url.indexOf('http') is 0
-		if not _.isString(url) or not isAddress
-			err = "Sitemap: url passed into get() method must be a URL string"
-			console.log err.error
-			throw new Error err
 
 		urls = []
 		for route in routes
