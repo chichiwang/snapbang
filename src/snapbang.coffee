@@ -35,6 +35,7 @@ config = new Config
 			filename: 'sitemap.xml'
 		snapshots:
 			enabled: false
+
 # [class] Sitemap Generator
 class Sitemap
 	get: (url, routes)->
@@ -63,7 +64,7 @@ class Sitemap
 		not _.isUndefined v
 
 # Process Files
-writeProcFile = ->
+writeProcFile = ()->
 	dir = createDir Options.procDir
 	filepath = dir+'/'+Options.sitemap.filename
 
@@ -105,23 +106,24 @@ snapshotTest = ->
 		auth: 'test:password'
 		selector: 'body'
 		processLimit: 1
-# === HELPER FUNCTIONS ===
+
+# [helpers]
+# .. sanitize a string to make it safe for regexp
 escapeRegExp = (string) ->
 	return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1")
-
+# .. deep mkdir
 createDir = (dir)->
 	backSlash = new RegExp(escapeRegExp('\\'), 'g')
 	dir = dir.replace backSlash, '/'
 	dirs = dir.split('/')
+	
 	currentDir = false
-
 	for folder in dirs
 		if currentDir is false
 			currentDir = folder
 		else
 			currentDir = currentDir+'/'+folder
-		if not fs.existsSync(currentDir)
-			fs.mkdirSync(currentDir)
+		fs.mkdirSync(currentDir) if not fs.existsSync(currentDir)
 	currentDir
 
 # [main]
