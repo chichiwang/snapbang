@@ -15,16 +15,16 @@
  * Licensed under the MIT license.
  */`
 
-# Modules
+# [dep] Modules
 fs = require 'fs'
 colors = require './colors'
 
-# Vendors
+# [dep] Vendors
 _ = require 'lodash-node'
 sm = require 'sitemap'
 snapshots = require 'html-snapshots'
 
-# Retrieve Config JSON
+# [class] Retrieve Config JSON
 Config = require './config'
 config = new Config
 	configFile: 'snapbang.json'
@@ -35,29 +35,41 @@ config = new Config
 			filename: 'sitemap.xml'
 		snapshots:
 			enabled: false
+# [class] Sitemap Generator
+class Sitemap
+	get: (url, routes)->
+		options = _formatOptions url, routes
+		sitemap = sm.createSitemap(options)
+		_formatSitemap sitemap.toString()
+	_formatOptions = (url, routes)->
+		urls = []
+		for route in routes
+			urls.push {
+				url: route.route if _isDefined(route.route)
+				changefreq: route.changefreq if _isDefined(route.changefreq)
+				priority: route.priority if _isDefined(route.priority)
+			}
 
-# Primary Execution Block
-main = ->
-	console.log 'main:'.notice, config.get('snapshots.auth')
-	config.set('snapshots.auth', 'new:auth')
-	console.log 'main:'.notice, config.get('snapshots.auth')
-	config.set('', 'test replace')
-	console.log 'main:'.notice, config.get()
-	# sitemap = createSitemap()
-	# console.log notice('INITIAL SITEMAP'), '\n', sitemap
-	# prepOptions()
-	# writeProcFile()
-	# createSnapshots()
-	# dispose()
+		options =
+			hostname: url
+			cacheTime: 0
+			urls: urls
+	_formatSitemap = (sitemapStr)->
+		openUrl = new RegExp(escapeRegExp('<url>'), 'g')
+		closeUrl = new RegExp(escapeRegExp(' </url>'), 'g')
+		tagSpace =  new RegExp(escapeRegExp('> <'), 'g')
+		sitemapStr.replace(openUrl, '	<url>').replace(closeUrl, '\n	</url>').replace(tagSpace,'>\n		<')
+	_isDefined = (v)->
+		not _.isUndefined v
 
-# === Process Files ===
+# Process Files
 writeProcFile = ->
 	dir = createDir Options.procDir
 	filepath = dir+'/'+Options.sitemap.filename
 
 	url = Options.snapshots.url
 	routes = Options.routes
-	Options.sitemap.xml = getSitemap(sitemapOptions(url, routes))
+	Options.sitemap.xml = sitemap.get(url, routes)
 
 	fs.writeFileSync filepath, Options.sitemap.xml
 
@@ -75,29 +87,6 @@ rmProcDir = ->
 rmProcFile = ->
 	filepath = Options.procDir+'/'+Options.sitemap.filename
 	fs.unlinkSync filepath
-
-# === Sitemap Functions ===
-sitemapOptions = (url, routes)->
-	urls = []
-	for route in routes
-		urls.push {
-			url: route.route if not _.isUndefined(route.route)
-			changefreq: route.changefreq if not _.isUndefined(route.changefreq)
-			priority: route.priority if not _.isUndefined(route.priority)
-		}
-
-	options =
-		hostname: url
-		cacheTime: 0
-		urls: urls
-getSitemap = (options)->
-	sitemap = sm.createSitemap(options)
-	formatSitemap sitemap.toString()
-formatSitemap = (sitemapStr)->
-	openUrl = new RegExp(escapeRegExp('<url>'), 'g')
-	closeUrl = new RegExp(escapeRegExp(' </url>'), 'g')
-	tagSpace =  new RegExp(escapeRegExp('> <'), 'g')
-	sitemapStr.replace(openUrl, '	<url>').replace(closeUrl, '\n	</url>').replace(tagSpace,'>\n		<')
 
 # === Snapshot Functions ===
 createSnapshots: ->
@@ -134,5 +123,14 @@ createDir = (dir)->
 		if not fs.existsSync(currentDir)
 			fs.mkdirSync(currentDir)
 	currentDir
+
+# [main]
+sitemap = new Sitemap
+main = ->
+	console.log 'main:'.notice, config.get()
+
+	if config.get('snapshots.enabled') is true
+		snapmap = sitemap.get config.get('snapshots.url'), config.get('routes')
+		console.log 'snapshots enabled'.debug, snapmap
 
 exports.convert = main
