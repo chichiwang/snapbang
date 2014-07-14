@@ -39,10 +39,17 @@ config = new Config
 # [class] Sitemap Generator
 class Sitemap
 	get: (url, routes)->
-		options = _formatOptions url, routes
-		sitemap = sm.createSitemap(options)
+		smOptions = _processOptions url, routes
+		sitemap = sm.createSitemap(smOptions)
 		_formatSitemap sitemap.toString()
-	_formatOptions = (url, routes)->
+	_processOptions = (url, routes)->
+		_validateParams url, routes
+		isAddress = url.indexOf('http') is 0
+		if not _.isString(url) or not isAddress
+			err = "Sitemap: url passed into get() method must be a URL string"
+			console.log err.error
+			throw new Error err
+
 		urls = []
 		for route in routes
 			urls.push {
@@ -62,8 +69,23 @@ class Sitemap
 		sitemapStr.replace(openUrl, '	<url>').replace(closeUrl, '\n	</url>').replace(tagSpace,'>\n		<')
 	_isDefined = (v)->
 		not _.isUndefined v
+	_validateParams = (url, routes)->
+		# url must be a URL string
+		isAddress = url.indexOf('http') is 0
+		if not _.isString(url) or not isAddress
+			err = "Sitemap: url passed into get() method must be a URL string"
+			console.log err.error
+			throw new Error err
+		# routes be an array of options - option route must be defined
+		isArray = _.isArray routes
+		hasRoutes = true
+		(hasRoutes = (_.isString(route.route) and hasRoutes)) for route in routes
+		if hasRoutes is false
+			err = "Sitemap: routes option in routes object must be defined"
+			console.log err.error
+			throw new Error err
 
-# Process Files
+# [control] Process Files
 writeProcFile = ()->
 	dir = createDir Options.procDir
 	filepath = dir+'/'+Options.sitemap.filename
@@ -116,7 +138,7 @@ createDir = (dir)->
 	backSlash = new RegExp(escapeRegExp('\\'), 'g')
 	dir = dir.replace backSlash, '/'
 	dirs = dir.split('/')
-	
+
 	currentDir = false
 	for folder in dirs
 		if currentDir is false
@@ -132,7 +154,8 @@ main = ->
 	console.log 'main:'.notice, config.get()
 
 	if config.get('snapshots.enabled') is true
+		snapmapDir = config.get 'procDir'
 		snapmap = sitemap.get config.get('snapshots.url'), config.get('routes')
-		console.log 'snapshots enabled'.debug, snapmap
+		console.log 'snapshots enabled'.debug, snapmapDir
 
 exports.convert = main
