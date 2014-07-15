@@ -73,40 +73,7 @@ class Sitemap
 			err = "Sitemap: url passed into get() method must be a URL string"
 			console.log err.error
 			throw new Error err
-		# routes be an array of options - option route must be defined
-		isArray = _.isArray routes
-		hasRoutes = true
-		(hasRoutes = (_.isString(route.route) and hasRoutes)) for route in routes
-		if hasRoutes is false
-			err = "Sitemap: routes option in routes object must be defined"
-			console.log err.error
-			throw new Error err
-
-# [control] Process Files
-writeProcFile = ()->
-	dir = createDir Options.procDir
-	filepath = dir+'/'+Options.sitemap.filename
-
-	url = Options.snapshots.url
-	routes = Options.routes
-	Options.sitemap.xml = sitemap.get(url, routes)
-
-	fs.writeFileSync filepath, Options.sitemap.xml
-
-dispose = ->
-	rmProcFile()
-	rmProcDir()
-rmProcDir = ->
-	dirContents = fs.readdirSync Options.procDir
-	if _.isEmpty(dirContents)
-		fs.rmdirSync Options.procDir
 		true
-	else
-		console.log errorTitle('Error:'), errorMsg('Temp Directory Not Empty')
-		throw new Error 'Temp Directory Not Empty'
-rmProcFile = ->
-	filepath = Options.procDir+'/'+Options.sitemap.filename
-	fs.unlinkSync filepath
 
 # === Snapshot Functions ===
 createSnapshots: ->
@@ -144,15 +111,82 @@ createDir = (dir)->
 			currentDir = currentDir+'/'+folder
 		fs.mkdirSync(currentDir) if not fs.existsSync(currentDir)
 	currentDir
+# .. rmDir
+rmDir = (dir)->
+	dirContents = fs.readdirSync dir
+	if _.isEmpty(dirContents)
+		fs.rmdirSync dir
+		true
+	else
+		err = "rmDir: Directory not empty"
+		console.log err.error
+		throw new Error err
+
+# .. validate config object for this app
+_validateConfig = (configObj)->
+	hasErr = false
+
+	# check for sitemap and snapshots options
+	sitemap = configObj.get('sitemap')
+	if _.isUndefined(sitemap)
+		configObj.set('sitemap', { enable: false })
+	snapshots = configObj.get('snapshots')
+	if _.isUndefined(snapshots)
+		configObj.set('snapshots', { enable: false })
+	if !configObj.get('sitemap.enabled') and !configObj.get('snapshots.enabled')
+		err = "Config: Sitemap and Snapshots functionality both disabled"
+		hasErr = false
+
+	# check for base URL
+	baseURL = configObj.get('url')
+	if _.isUndefined(baseURL)
+		err = "Config: Must declare a url"
+		hassErr = true
+	# check for routes
+	routes = configObj.get('routes')
+	if _.isUndefined(routes)
+		err = "Config: Must have routes defined"
+		hasErr = true
+	if _.isObject(routes) and !_.isArray(routes)
+		routes = [routes]
+		configObj.set('routes', routes)
+	hasRoutes = true
+	(hasRoutes = (_.isString(route.route) and hasRoutes)) for route in routes
+	if hasRoutes is false
+		err = "Config: route param in each routes object must be defined"
+		hasErr = true
+
+	if hasErr is true
+		console.log err.error
+		throw new Error err
+	true
+
 
 # [main]
 sitemap = new Sitemap
 main = ->
-	console.log 'main:'.notice, config.get()
+	_validateConfig config
 
 	if config.get('snapshots.enabled') is true
-		snapmapDir = config.get 'procDir'
-		snapmap = sitemap.get config.get('snapshots.url'), config.get('routes')
-		console.log 'snapshots enabled'.debug, snapmapDir
+		# generate temporary sitemap for snapshots
+		snapmapDir = createDir config.get('procDir')
+		snapshotsURL = if config.get('snapshots.url') then config.get('snapshots.url') else config.get('url')
+		snapmap = sitemap.get snapshotsURL, config.get('routes')
+		filepath = snapmapDir+'/'+config.get('sitemap.filename')
+		fs.writeFileSync filepath, snapmap
+
+	if config.get('snapshots.enabled') is true
+		# clean up temporary sitemap for snapshots
+		filepath = snapmapDir+'/'+config.get('sitemap.filename')
+		fs.unlinkSync filepath
+		rmDir snapmapDir
+
+	if config.get('sitemap.enabled') is true
+		sitemapDir = createDir config.get('sitemap.destination')
+		sitemapContents = sitemap.get config.get('url'), config.get('routes')
+		filepath = sitemapDir+'/'+config.get('sitemap.filename')
+		fs.writeFileSync filepath, sitemapContents
+
+	console.log 'main:'.notice, config.get()
 
 exports.convert = main
