@@ -64,8 +64,6 @@ class Sitemap
 		closeUrl = new RegExp(escapeRegExp(' </url>'), 'g')
 		tagSpace =  new RegExp(escapeRegExp('> <'), 'g')
 		sitemapStr.replace(openUrl, '	<url>').replace(closeUrl, '\n	</url>').replace(tagSpace,'>\n		<')
-	_isDefined = (v)->
-		not _.isUndefined v
 	_validateParams = (url, routes)->
 		# url must be a URL string
 		isAddress = url.indexOf('http') is 0
@@ -75,9 +73,16 @@ class Sitemap
 			throw new Error err
 		true
 
-# === Snapshot Functions ===
-createSnapshots: ->
-	# ...
+# [class] Snapshot Generator
+class Snapbang
+	constructor: (options)->
+		init options
+	init: (options)->
+		# ...
+	run: (options)->
+		# ...
+	generate: ->
+		# ...
 
 snapshotTest = ->
 	success = snapshots.run
@@ -94,6 +99,9 @@ snapshotTest = ->
 		processLimit: 1
 
 # [helpers]
+# .. not _.isUndefined takes too long to write and reason about
+_isDefined = (v)->
+		not _.isUndefined v
 # .. sanitize a string to make it safe for regexp
 escapeRegExp = (string) ->
 	return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1")
@@ -156,6 +164,7 @@ _validateConfig = (configObj)->
 		err = "Config: route param in each routes object must be defined"
 		hasErr = true
 
+	# throw errors
 	if hasErr is true
 		console.log err.error
 		throw new Error err
@@ -182,6 +191,7 @@ main = ->
 		rmDir snapmapDir
 
 	if config.get('sitemap.enabled') is true
+		# build sitemap into destination directory
 		sitemapDir = createDir config.get('sitemap.destination')
 		sitemapContents = sitemap.get config.get('url'), config.get('routes')
 		filepath = sitemapDir+'/'+config.get('sitemap.filename')
