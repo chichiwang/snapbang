@@ -240,9 +240,9 @@ disposeTempSitemap = ->
 
 generateSitemap = ->
 	# build sitemap into destination directory
-	sitemapDir = createDir config.get('sitemap.destination')
+	sDir = createDir config.get('sitemap.destination')
 	sitemapContents = sitemap.get config.get('url'), config.get('routes')
-	filepath = sitemapDir+'/'+config.get('sitemap.filename')
+	filepath = sDir+'/'+config.get('sitemap.filename')
 	fs.writeFileSync filepath, sitemapContents
 
 	console.log 'main:'.notice, config.get()
