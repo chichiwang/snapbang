@@ -50,9 +50,9 @@ class Sitemap
 		urls = []
 		for route in routes
 			urls.push {
-				url: route.route if _isDefined(route.route)
-				changefreq: route.changefreq if _isDefined(route.changefreq)
-				priority: route.priority if _isDefined(route.priority)
+				url: route.route if defined(route.route)
+				changefreq: route.changefreq if defined(route.changefreq)
+				priority: route.priority if defined(route.priority)
 			}
 
 		options =
@@ -75,14 +75,39 @@ class Sitemap
 
 # [class] Snapshot Generator
 class Snapbang
+	_options = undefined
 	constructor: (options)->
-		init options
+		@init options
 	init: (options)->
-		# ...
+		_options = _formatOptions options
+		console.log 'SnapBang init:'.debug, _options
+	_formatOptions = (options)->
+		# snapshots defaults
+		defaults =
+			input: 'sitemap'
+			outputDirClean: true
+			selector: 'body'
+			processLimit: 1
+		
+		# mandatory config
+		sCfg = options.snapshots
+		ssOpts =
+			source: options.procDir+'/'+options.sitemap.filename
+			hostname: ifDefinedElse(sCfg.url, options.url)
+			outputDir: thisDir(sCfg.destination)
+		# optional config
+		ssOpts.outputPath = sCfg.outputPath if defined(sCfg.outputPath)
+		ssOpts.auth = sCfg.auth if defined(sCfg.auth)
+		ssOpts.selector = sCfg.selector if defined(sCfg.selector)
+		ssOpts.processLimit = sCfg.processLimit if defined(sCfg.processLimit)
+
+		_.merge ssOpts, defaults
+
 	run: (options)->
-		# ...
-	generate: ->
-		# ...
+		init(options) if options
+		generate(_options)
+	generate: (options)->
+		# SNAPBANG
 
 snapshotTest = ->
 	success = snapshots.run
@@ -99,8 +124,22 @@ snapshotTest = ->
 		processLimit: 1
 
 # [helpers]
+# ..
+thisDir = (dir)->
+	if not _.isString(dir)
+		err = "[helper] thisDir: argument dir must be a string"
+		console.log err.error
+		throw new Error err
+	isAbsolutePath = dir.charAt(0) is '/' or !!dir.match(/^.\//)
+	if not isAbsolutePath
+		'./'+dir
+	else
+		dir
+# .. returns arg1 if it is defined - returns arg2 otherwise
+ifDefinedElse = (v, w)->
+	if defined(v) then v else w
 # .. not _.isUndefined takes too long to write and reason about
-_isDefined = (v)->
+defined = (v)->
 		not _.isUndefined v
 # .. sanitize a string to make it safe for regexp
 escapeRegExp = (string) ->
@@ -171,9 +210,11 @@ _validateConfig = (configObj)->
 	true
 
 
+
 # [main]
 sitemap = new Sitemap
 main = ->
+	thisDir("./test")
 	_validateConfig config
 
 	if config.get('snapshots.enabled') is true
@@ -184,7 +225,9 @@ main = ->
 		filepath = snapmapDir+'/'+config.get('sitemap.filename')
 		fs.writeFileSync filepath, snapmap
 
-	if config.get('snapshots.enabled') is true
+		# generate snapshots
+		snapbang = new Snapbang config.get()
+
 		# clean up temporary sitemap for snapshots
 		filepath = snapmapDir+'/'+config.get('sitemap.filename')
 		fs.unlinkSync filepath
