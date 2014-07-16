@@ -213,6 +213,7 @@ _validateConfig = (configObj)->
 
 # [main]
 sitemap = new Sitemap
+snapmapDir = undefined
 main = ->
 	thisDir("./test")
 	_validateConfig config
@@ -228,17 +229,21 @@ main = ->
 		# generate snapshots
 		snapbang = new Snapbang config.get()
 
-		# clean up temporary sitemap for snapshots
-		filepath = snapmapDir+'/'+config.get('sitemap.filename')
-		fs.unlinkSync filepath
-		rmDir snapmapDir
+		disposeTempSitemap()
+		# if config.get('sitemap.enabled') is true
+		# 	generateSitemap()
+disposeTempSitemap = ->
+	# clean up temporary sitemap for snapshots
+	filepath = snapmapDir+'/'+config.get('sitemap.filename')
+	fs.unlinkSync filepath
+	rmDir snapmapDir
 
-	if config.get('sitemap.enabled') is true
-		# build sitemap into destination directory
-		sitemapDir = createDir config.get('sitemap.destination')
-		sitemapContents = sitemap.get config.get('url'), config.get('routes')
-		filepath = sitemapDir+'/'+config.get('sitemap.filename')
-		fs.writeFileSync filepath, sitemapContents
+generateSitemap = ->
+	# build sitemap into destination directory
+	sitemapDir = createDir config.get('sitemap.destination')
+	sitemapContents = sitemap.get config.get('url'), config.get('routes')
+	filepath = sitemapDir+'/'+config.get('sitemap.filename')
+	fs.writeFileSync filepath, sitemapContents
 
 	console.log 'main:'.notice, config.get()
 
