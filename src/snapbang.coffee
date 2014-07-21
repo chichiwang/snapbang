@@ -98,10 +98,11 @@ class Snapbang
 		# optional config
 		ssOpts.outputPath = sCfg.outputPath if defined(sCfg.outputPath)
 		ssOpts.auth = sCfg.auth if defined(sCfg.auth)
+		console.log '_formatOptions'.debug, sCfg.selector
 		ssOpts.selector = sCfg.selector if defined(sCfg.selector)
 		ssOpts.processLimit = sCfg.processLimit if defined(sCfg.processLimit)
 
-		_.merge ssOpts, defaults
+		ssOpts = _.merge defaults, ssOpts
 
 	run: (options)->
 		init(options) if options
