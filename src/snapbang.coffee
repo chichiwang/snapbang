@@ -76,12 +76,12 @@ class Sitemap
 # [class] Snapshot Generator
 class Snapbang
 	_options = undefined
-	constructor: (options)->
-		@init options
-	init: (options)->
-		_options = _formatOptions options
+	constructor: (config)->
+		@init config
+	init: (config)->
+		_options = _getOptionsFromConfig config
 		console.log 'SnapBang init:'.debug, _options
-	_formatOptions = (options)->
+	_getOptionsFromConfig = (config)->
 		# snapshots defaults
 		defaults =
 			input: 'sitemap'
@@ -90,22 +90,21 @@ class Snapbang
 			processLimit: 1
 		
 		# mandatory config
-		sCfg = options.snapshots
+		sCfg = config.snapshots
 		ssOpts =
-			source: options.procDir+'/'+options.sitemap.filename
-			hostname: ifDefinedElse(sCfg.url, options.url)
+			source: config.procDir+'/'+config.sitemap.filename
+			hostname: ifDefinedElse(sCfg.url, config.url)
 			outputDir: thisDir(sCfg.destination)
 		# optional config
 		ssOpts.outputPath = sCfg.outputPath if defined(sCfg.outputPath)
 		ssOpts.auth = sCfg.auth if defined(sCfg.auth)
-		console.log '_formatOptions'.debug, sCfg.selector
 		ssOpts.selector = sCfg.selector if defined(sCfg.selector)
 		ssOpts.processLimit = sCfg.processLimit if defined(sCfg.processLimit)
 
 		ssOpts = _.merge defaults, ssOpts
 
-	run: (options)->
-		init(options) if options
+	run: (config)->
+		init(config) if config
 		generate(_options)
 	generate: (options)->
 		# SNAPBANG
