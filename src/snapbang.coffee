@@ -12,7 +12,7 @@
  * 
  * Ideal for client-side web applications.
  *
- * Copyright (c) 2014, Chi Wang, contributors
+ * Copyright (c) 2014, Chi Wang
  * Licensed under the MIT license.
  */`
 
@@ -22,7 +22,6 @@ colors = require './colors'
 
 # [dep] Vendors
 _ = require 'lodash-node'
-sm = require 'sitemap'
 snapshots = require 'html-snapshots'
 
 # [class] Retrieve Config JSON
@@ -40,6 +39,7 @@ config = new Config
 # [class] Sitemap Generator
 class Sitemap
 	get: (url, routes)->
+		sm = require 'sitemap'
 		smOptions = _processOptions url, routes
 		sitemap = sm.createSitemap(smOptions)
 		_formatSitemap sitemap.toString()
@@ -232,6 +232,8 @@ main = ->
 		disposeTempSitemap()
 		# if config.get('sitemap.enabled') is true
 		# 	generateSitemap()
+
+		console.log 'main:'.notice, config.get()
 disposeTempSitemap = ->
 	# clean up temporary sitemap for snapshots
 	filepath = snapmapDir+'/'+config.get('sitemap.filename')
@@ -244,7 +246,5 @@ generateSitemap = ->
 	sitemapContents = sitemap.get config.get('url'), config.get('routes')
 	filepath = sDir+'/'+config.get('sitemap.filename')
 	fs.writeFileSync filepath, sitemapContents
-
-	console.log 'main:'.notice, config.get()
 
 exports.convert = main
