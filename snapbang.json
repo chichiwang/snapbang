@@ -23,6 +23,6 @@
 	"snapshots": {
 		"enabled": true,
 		"destination": "dist",
-		"auth": "test:password"
+		"selector": ".page_container"
 	}
 }
